@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="list_name">List</string>
+
+    <string name="ok_btn">Ok</string>
+    <string name="internet_error_msg">No Internet Available. Please try again later!</string>
+
 </resources>
