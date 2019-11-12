@@ -30,18 +30,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 
 
-public class APIRepoRepository {
-
-
-
-    private String TAG = "APIRepoRepository";
-
+public class ApiService {
+    private String TAG = "ApiService";
     private final ApiInterface apiService;
-
     @Inject
-    public APIRepoRepository(ApiInterface api) {
+    public ApiService(ApiInterface api) {
         apiService = api;
-
     }
 
 //    private Retrofit getRetrofit() {
@@ -107,17 +101,10 @@ public class APIRepoRepository {
         return apiService.getMainList();
     }
 
-
-
-
-
-
     // =============================================================
     public interface ApiInterface {
-
         @GET(Constant.LIST_URL)
         Single<ListData> getMainList();
-
     }
 
 }

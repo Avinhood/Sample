@@ -19,24 +19,19 @@ import dagger.android.support.DaggerFragment;
 public abstract class BaseFragment extends DaggerFragment {
     private Unbinder unbinder;
     private AppCompatActivity activity;
-
     @LayoutRes
     protected abstract int layoutRes();
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(layoutRes(), container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
         activity = (AppCompatActivity) context;
     }
-
     @Override
     public void onDetach() {
         super.onDetach();

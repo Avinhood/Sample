@@ -10,7 +10,6 @@ public class BaseViewModel extends ViewModel {
     public MutableLiveData<Boolean> getProgressDialog() {
         return progressDialog;
     }
-
     public MutableLiveData<String> getErrorMsg() {
         return errorMsg;
     }

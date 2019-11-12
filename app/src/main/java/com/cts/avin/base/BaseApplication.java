@@ -15,25 +15,14 @@ import dagger.android.AndroidInjector;
 import dagger.android.support.DaggerApplication;
 
 public class BaseApplication extends DaggerApplication {
-
-
-
-    private Glide glide;
     @Override
     public void onCreate() {
         super.onCreate();
-        glide = Glide.get(this);
     }
-
-    public Glide getGlide() {
-        return glide;
-    }
-
     @Override
     protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
         AppComponent component = DaggerAppComponent.builder().application(this).build();
         component.inject(this);
-
         return component;
     }
 }

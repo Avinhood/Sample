@@ -7,7 +7,6 @@ public class Util {
 
     private Util() {
     }
-
     /*
      * Will create a JsonObject to return it.
      *
@@ -17,7 +16,6 @@ public class Util {
         final JsonObject jsonBody = new JsonObject();
         JsonArray jsonArray = new JsonArray();
         try {
-
             jsonBody.add("Include", jsonArray);
         } catch (Exception e) {
 

@@ -5,7 +5,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
-    tools:context="com.cts.avin.ui.splash.SplashActivity">
-
-
+    tools:context="com.cts.avin.ui.splash.Splash_Activity">
 </LinearLayout>

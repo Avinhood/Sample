@@ -5,18 +5,15 @@ import android.content.Context;
 import android.net.NetworkInfo;
 import android.util.Log;
 
-import com.bumptech.glide.Glide;
-import com.cts.avin.network.APIRepoRepository;
+import com.cts.avin.network.ApiService;
 import com.cts.avin.util.Constant;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -39,10 +36,8 @@ public class AppModule {
 
     public  final String HEADER_CACHE_CONTROL = "Cache-Control";
     public  final String HEADER_PRAGMA = "Pragma";
-
     @Inject
     Context mContext;
-
 
     @Provides
     Retrofit provideRetrofit() {
@@ -70,8 +65,6 @@ public class AppModule {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(httpClient)
                 .build();
-
-
     }
 
     private Interceptor provideJsonInterceptor() {
@@ -159,8 +152,8 @@ public class AppModule {
 
 
     @Provides
-    static APIRepoRepository.ApiInterface provideRetrofitService(Retrofit retrofit) {
-        return retrofit.create(APIRepoRepository.ApiInterface.class);
+    static ApiService.ApiInterface provideRetrofitService(Retrofit retrofit) {
+        return retrofit.create(ApiService.ApiInterface.class);
     }
 
 }

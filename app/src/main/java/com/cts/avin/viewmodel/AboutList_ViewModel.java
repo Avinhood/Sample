@@ -3,9 +3,8 @@ package com.cts.avin.viewmodel;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
-import com.cts.avin.network.APIRepoRepository;
+import com.cts.avin.network.ApiService;
 import com.cts.avin.data.main.ListData;
-import com.google.gson.JsonObject;
 
 import javax.inject.Inject;
 
@@ -14,14 +13,14 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainListViewModel extends BaseViewModel{
+public class AboutList_ViewModel extends BaseViewModel{
 
     private final MutableLiveData<ListData> mainList = new MutableLiveData<>();
-    private final APIRepoRepository repoRepository;
+    private final ApiService repoRepository;
     private CompositeDisposable disposable;
 
     @Inject
-    public MainListViewModel(APIRepoRepository repoRepository) {
+    public AboutList_ViewModel(ApiService repoRepository) {
         this.repoRepository = repoRepository;
         disposable = new CompositeDisposable();
     }
@@ -47,7 +46,6 @@ public class MainListViewModel extends BaseViewModel{
                     }
                 }));
     }
-
 
     public MutableLiveData<ListData> getMainListData() {
         return mainList;

@@ -9,9 +9,9 @@ import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.cts.avin.R;
-import com.cts.avin.ui.main.MainActivity;
+import com.cts.avin.ui.main.Home_Activity;
 
-public class SplashActivity extends AppCompatActivity {
+public class Splash_Activity extends AppCompatActivity {
     private static final int SPLASH_TIME_OUT = 2000;
 
     @Override
@@ -23,20 +23,18 @@ public class SplashActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.splash_activity);
         showHomeScreen();
-
     }
 
     /*
-     * Showing splash screen with a timer. On completion of time will show Patient List Screen.
+     * Showing splash screen with a timer. On completion of time will show List Screen.
      */
     private void showHomeScreen() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                startActivity(new Intent(Splash_Activity.this, Home_Activity.class));
                 finish();
             }
-
         }, SPLASH_TIME_OUT);
     }
 }
