@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.cts.avin.R;
 import com.cts.avin.data.main.Rows;
 import com.cts.avin.viewmodel.AboutList_ViewModel;
@@ -71,12 +72,11 @@ public class AboutList_Adapter extends RecyclerView.Adapter<AboutList_Adapter.It
             this.data = data;
             tvName.setText(data.getTitle());
             tvDesc.setText(data.getDescription());
-           // Glide.with(ivImage.getContext()).load(data.getImageHref()).centerInside().into(ivImage);
-//            GlideApp.with(mContext).load(data.getImageHref()).centerInside().into(ivImage);
+            Glide.with(ivImage.getContext()).load(data.getImageHref()).centerInside()
+                    .placeholder(R.drawable.ic_launcher_background).into(ivImage);
 
         }
     }
-
 
     public List<Rows> getData() {
         return data;
