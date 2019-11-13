@@ -25,19 +25,12 @@ import butterknife.ButterKnife;
 
 public class AboutList_Adapter extends RecyclerView.Adapter<AboutList_Adapter.ItemViewHolder> {
     private AboutListItemSelected_Listener itemSelectedListener;
-    private final List<Rows> data = new ArrayList<>();
+    List<Rows> data = new ArrayList<>();
     @Inject
     Context mContext;
 
-    public AboutList_Adapter(AboutList_ViewModel viewModel, LifecycleOwner lifecycleOwner, AboutListItemSelected_Listener itemSelectedListener) {
+    public AboutList_Adapter( AboutListItemSelected_Listener itemSelectedListener) {
         this.itemSelectedListener = itemSelectedListener;
-        viewModel.getMainListData().observe(lifecycleOwner, listData -> {
-            data.clear();
-            if (listData != null) {
-                data.addAll(listData.getRows());
-                notifyDataSetChanged();
-            }
-        });
         setHasStableIds(true);
     }
     @NonNull
@@ -83,4 +76,13 @@ public class AboutList_Adapter extends RecyclerView.Adapter<AboutList_Adapter.It
 
         }
     }
+
+
+    public List<Rows> getData() {
+        return data;
+    }
+    public void setData(List<Rows> data) {
+        this.data = data;
+    }
+
 }

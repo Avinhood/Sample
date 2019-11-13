@@ -44,6 +44,7 @@ public class AboutList_Fragment extends BaseFragment implements AboutListItemSel
     ViewModelFactory mViewModelFactory;
     private AboutList_ViewModel mViewModel;
     private ListData mMainListData;
+    private AboutList_Adapter mAboutListAdapter;
 
     public static AboutList_Fragment newInstance() {
         return new AboutList_Fragment();
@@ -75,17 +76,18 @@ public class AboutList_Fragment extends BaseFragment implements AboutListItemSel
                 android.R.color.holo_red_light);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mListView.addItemDecoration(new DividerItemDecoration(getBaseActivity(), DividerItemDecoration.VERTICAL));
-        mListView.setAdapter(new AboutList_Adapter(mViewModel, this, this));
+        mAboutListAdapter = new AboutList_Adapter(this);
+        mListView.setAdapter(mAboutListAdapter);
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
 //        if (isNetworkConnected()) {
         if (mMainListData == null) {
             makeMainListCall();
@@ -117,6 +119,7 @@ public class AboutList_Fragment extends BaseFragment implements AboutListItemSel
                 mSwipeRefresh.setRefreshing(false);
                 getActivity().setTitle(listData.getTitle());
                 mMainListData = listData;
+                mAboutListAdapter.setData(mMainListData.getRows());
                 mErrorTextView.setVisibility(View.GONE);
                 mListView.setVisibility(View.VISIBLE);
             }

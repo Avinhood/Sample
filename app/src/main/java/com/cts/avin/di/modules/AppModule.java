@@ -31,7 +31,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 
-@Module(includes = ViewModelModule.class)
+@Module(includes = FeatureModule.class)
 public class AppModule {
 
     public  final String HEADER_CACHE_CONTROL = "Cache-Control";
