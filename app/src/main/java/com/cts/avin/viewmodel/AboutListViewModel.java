@@ -13,14 +13,14 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
-public class AboutList_ViewModel extends BaseViewModel{
+public class AboutListViewModel extends BaseViewModel{
 
     private final MutableLiveData<ListData> mainList = new MutableLiveData<>();
     private final ApiService repoRepository;
     private CompositeDisposable disposable;
 
     @Inject
-    public AboutList_ViewModel(ApiService repoRepository) {
+    public AboutListViewModel(ApiService repoRepository) {
         this.repoRepository = repoRepository;
         disposable = new CompositeDisposable();
     }
@@ -29,7 +29,6 @@ public class AboutList_ViewModel extends BaseViewModel{
      * Method to get get the List by hitting API.
      * */
     public void makeMainListCall() {
-        Log.e("===", "makeMainListCall");
         getProgressDialog().postValue(true);
         disposable.add(repoRepository.getMainList().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableSingleObserver<ListData>() {

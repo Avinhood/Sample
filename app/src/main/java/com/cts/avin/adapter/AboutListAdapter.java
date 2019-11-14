@@ -1,6 +1,5 @@
 package com.cts.avin.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,29 +7,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.cts.avin.R;
 import com.cts.avin.data.main.Rows;
-import com.cts.avin.viewmodel.AboutList_ViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AboutList_Adapter extends RecyclerView.Adapter<AboutList_Adapter.ItemViewHolder> {
-    private AboutListItemSelected_Listener itemSelectedListener;
+public class AboutListAdapter extends RecyclerView.Adapter<AboutListAdapter.ItemViewHolder> {
+    private AboutListItemSelectedListener itemSelectedListener;
     List<Rows> data = new ArrayList<>();
-    @Inject
-    Context mContext;
 
-    public AboutList_Adapter( AboutListItemSelected_Listener itemSelectedListener) {
+    public AboutListAdapter(AboutListItemSelectedListener itemSelectedListener) {
         this.itemSelectedListener = itemSelectedListener;
         setHasStableIds(true);
     }
@@ -58,7 +51,7 @@ public class AboutList_Adapter extends RecyclerView.Adapter<AboutList_Adapter.It
         ImageView ivImage;
         private Rows data;
 
-        ItemViewHolder(View itemView, AboutListItemSelected_Listener itemSelectedListener) {
+        ItemViewHolder(View itemView, AboutListItemSelectedListener itemSelectedListener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(v -> {

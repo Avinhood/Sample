@@ -1,12 +1,14 @@
 package com.cts.avin.di.modules;
 
 
+import android.app.Application;
 import android.content.Context;
 import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.cts.avin.network.ApiService;
 import com.cts.avin.util.Constant;
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -14,6 +16,7 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -34,46 +37,73 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
 @Module(includes = FeatureModule.class)
 public class AppModule {
 
-    public  final String HEADER_CACHE_CONTROL = "Cache-Control";
-    public  final String HEADER_PRAGMA = "Pragma";
+    public final String HEADER_CACHE_CONTROL = "Cache-Control";
+    public final String HEADER_PRAGMA = "Pragma";
     @Inject
     Context mContext;
 
     @Provides
-    Retrofit provideRetrofit() {
+    Cache provideHttpCache(Application application) {
+        int cacheSize = 10 * 1024 * 1024;
+        Cache cache = new Cache(application.getCacheDir(), cacheSize);
+        return cache;
+    }
+
+    @Provides
+    Gson provideGson() {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+        return gsonBuilder.create();
+    }
+
+    @Provides
+    OkHttpClient provideOkhttpClient(Cache cache, Interceptor interceptor) {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         // set your desired log level
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        OkHttpClient.Builder okHttpClient = new OkHttpClient().newBuilder()
-                .addInterceptor(provideOfflineCacheInterceptor())
-                .addNetworkInterceptor(provideCacheInterceptor())
-                .cache(provideCache())
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
+        OkHttpClient.Builder client = new OkHttpClient.Builder()
+                .cache(cache)
                 .addInterceptor(logging)
-                .addInterceptor(provideJsonInterceptor());
+                .addInterceptor(interceptor);
+        return client.build();
+    }
 
-
-        OkHttpClient httpClient = okHttpClient.build();
-
-        Gson gson = new GsonBuilder().create();
+    @Provides
+    Retrofit provideRetrofit(Gson gson, OkHttpClient okHttpClient) {
 
         return new Retrofit.Builder().baseUrl(Constant.BASE_URL)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .client(httpClient)
+                .client(okHttpClient)
                 .build();
     }
 
-    private Interceptor provideJsonInterceptor() {
+    @Provides
+    Interceptor provideInterceptor() {
         return chain -> {
             Request original = chain.request();
+            Request.Builder requestBuilder = original.newBuilder();
+            CacheControl cacheControl;
+            // removing any existing cache control definition
+            requestBuilder.addHeader("Accept", "application/json;version=10")
+                    .addHeader("Content-Type", "application/json")
+                    .removeHeader(HEADER_PRAGMA)
+                    .removeHeader(HEADER_CACHE_CONTROL);
 
-            Request.Builder requestBuilder = original.newBuilder()
-                    .addHeader("Accept", "application/json;version=10")
-                    .addHeader("Content-Type", "application/json");
+            if (isConnected()) {
+                cacheControl = new CacheControl.Builder()
+                        .maxAge(0, TimeUnit.SECONDS)
+                        .build();
+            } else {
+                cacheControl = new CacheControl.Builder()
+                        .maxStale(7, TimeUnit.DAYS)
+                        .build();
+            }
+            // adding custom cache control definition
+            requestBuilder
+                    .header(HEADER_CACHE_CONTROL, cacheControl.toString());
+
             Request request = requestBuilder.build();
             return chain.proceed(request);
         };
@@ -86,70 +116,11 @@ public class AppModule {
             NetworkInfo activeNetwork = e.getActiveNetworkInfo();
             return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
         } catch (Exception e) {
-            Log.w(TAG, "=====error network======="+e.toString());
+            Log.w(TAG, "=====error network=======" + e.toString());
         }
 
         return false;
     }
-
-    private Interceptor provideOfflineCacheInterceptor() {
-        return chain -> {
-            Request request = chain.request();
-
-            if (!isConnected()) {
-                CacheControl cacheControl = new CacheControl.Builder()
-                        .maxStale(7, TimeUnit.DAYS)
-                        .build();
-
-                request = request.newBuilder()
-                        .removeHeader(HEADER_PRAGMA)
-                        .removeHeader(HEADER_CACHE_CONTROL)
-                        .cacheControl(cacheControl)
-                        .build();
-            }
-
-            return chain.proceed(request);
-        };
-    }
-
-    private Interceptor provideCacheInterceptor() {
-        return chain -> {
-            Response response = chain.proceed(chain.request());
-
-            CacheControl cacheControl;
-
-            if (isConnected()) {
-                cacheControl = new CacheControl.Builder()
-                        .maxAge(0, TimeUnit.SECONDS)
-                        .build();
-            } else {
-                cacheControl = new CacheControl.Builder()
-                        .maxStale(7, TimeUnit.DAYS)
-                        .build();
-            }
-
-            return response.newBuilder()
-                    .removeHeader(HEADER_PRAGMA)
-                    .removeHeader(HEADER_CACHE_CONTROL)
-                    .header(HEADER_CACHE_CONTROL, cacheControl.toString())
-                    .build();
-
-        };
-    }
-
-    private  Cache provideCache() {
-        Cache cache = null;
-
-        try {
-            cache = new Cache(new File(mContext.getCacheDir(), "http-cache"),
-                    10 * 1024 * 1024); // 10 MB
-        } catch (Exception e) {
-            Log.e(TAG, "Could not create Cache!");
-        }
-
-        return cache;
-    }
-
 
     @Provides
     static ApiService.ApiInterface provideRetrofitService(Retrofit retrofit) {

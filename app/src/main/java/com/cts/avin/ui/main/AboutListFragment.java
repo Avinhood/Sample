@@ -16,21 +16,21 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.cts.avin.R;
-import com.cts.avin.adapter.AboutList_Adapter;
+import com.cts.avin.adapter.AboutListAdapter;
 import com.cts.avin.base.BaseFragment;
 import com.cts.avin.data.main.ListData;
 import com.cts.avin.data.main.Rows;
-import com.cts.avin.adapter.AboutListItemSelected_Listener;
+import com.cts.avin.adapter.AboutListItemSelectedListener;
 import com.cts.avin.util.ViewModelFactory;
-import com.cts.avin.viewmodel.AboutList_ViewModel;
+import com.cts.avin.viewmodel.AboutListViewModel;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 
-public class AboutList_Fragment extends BaseFragment implements AboutListItemSelected_Listener {
+public class AboutListFragment extends BaseFragment implements AboutListItemSelectedListener {
 
-    private final String TAG  = AboutList_Fragment.class.getName();
+    private final String TAG  = AboutListFragment.class.getName();
 
     @BindView(R.id.recyclerView)
     RecyclerView mListView;
@@ -42,12 +42,12 @@ public class AboutList_Fragment extends BaseFragment implements AboutListItemSel
     SwipeRefreshLayout mSwipeRefresh;
     @Inject
     ViewModelFactory mViewModelFactory;
-    private AboutList_ViewModel mViewModel;
+    private AboutListViewModel mViewModel;
     private ListData mMainListData;
-    private AboutList_Adapter mAboutListAdapter;
+    private AboutListAdapter mAboutListAdapter;
 
-    public static AboutList_Fragment newInstance() {
-        return new AboutList_Fragment();
+    public static AboutListFragment newInstance() {
+        return new AboutListFragment();
     }
 
     @Override
@@ -58,7 +58,7 @@ public class AboutList_Fragment extends BaseFragment implements AboutListItemSel
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(AboutList_ViewModel.class);
+        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(AboutListViewModel.class);
     }
 
     @Override
@@ -81,28 +81,24 @@ public class AboutList_Fragment extends BaseFragment implements AboutListItemSel
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mListView.addItemDecoration(new DividerItemDecoration(getBaseActivity(), DividerItemDecoration.VERTICAL));
-        mAboutListAdapter = new AboutList_Adapter(this);
+        mAboutListAdapter = new AboutListAdapter(this);
         mListView.setAdapter(mAboutListAdapter);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-//        if (isNetworkConnected()) {
         if (mMainListData == null) {
             makeMainListCall();
         } else {
             mLoadingView.setVisibility(View.GONE);
         }
-//        }
-//        else {
-//            Toast.makeText(getContext(), getString(R.string.internet_error_msg), Toast.LENGTH_SHORT).show();
-//        }
+
     }
     /*
      * Method to call the ViewModel which will hit the API & will give the response.
      * */
-    protected void makeMainListCall() {
+    void makeMainListCall() {
 
         mViewModel.getProgressDialog().observe(this, isLoading -> {
             if (isLoading != null) {
